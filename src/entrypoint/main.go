@@ -13,9 +13,8 @@ import (
 
 func main() {
 	c := config.Get()
-
-	fmt.Println(c)
-	fmt.Println(c.Resolver)
+	s := server.New(c)
+	s.Run()
 	c.Resolver.VPrint("---------------------")
 	rinitErr := c.Resolver.Init()
 	if rinitErr == nil {
@@ -25,8 +24,6 @@ func main() {
 		allowL := list.New()
 		allowL.AddMap(c.Allow.Entries)
 
-		s := server.New(c)
-		s.Run()
 		c.Resolver.VPrint("---------------------")
 		for {
 			blockL.AddOnlineMap(c.Block.Lists, c.Resolver.Verbose)
