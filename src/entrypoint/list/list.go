@@ -39,14 +39,20 @@ func (l List) AddOnlineMap(m map[int]string, verbose bool) {
 		resp, err := http.Get(m[ak])
 		if err == nil {
 			defer resp.Body.Close()
+			entries := 0
 			scanner := bufio.NewScanner(resp.Body)
 			for scanner.Scan() {
 				row := scanner.Text()
 				if !strings.HasPrefix("#", row) {
 					l.Add(row)
+					entries++
 				}
 			}
-
+			if verbose {
+				fmt.Println("Entries added:", entries)
+			}
+		} else {
+			fmt.Println("List load failed:", m[ak])
 		}
 	}
 }
