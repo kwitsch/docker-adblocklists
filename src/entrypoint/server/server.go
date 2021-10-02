@@ -67,7 +67,7 @@ func (s *Server) returnString(c *gin.Context, value string, entries int) {
 		c.Data(http.StatusOK, "text/plain", []byte(value))
 		s.Config.Resolver.VPrint("Returned " + strconv.Itoa(entries) + " entries")
 	} else {
-		c.AbortWithStatus(http.StatusNotFound)
-		s.Config.Resolver.VPrint("Request aborted")
+		c.AbortWithStatus(http.StatusTooEarly)
+		s.Config.Resolver.VPrint("List isen't ready yet")
 	}
 }
