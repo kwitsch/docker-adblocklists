@@ -17,6 +17,7 @@ func main() {
 	s.Run()
 	c.Resolver.VPrint("---------------------")
 	rinitErr := c.Resolver.Init()
+	httpClient, _ := c.Resolver.GetHttpClient()
 	if rinitErr == nil {
 		blockL := list.New()
 		blockL.AddMap(c.Block.Entries)
@@ -26,9 +27,10 @@ func main() {
 
 		c.Resolver.VPrint("---------------------")
 		for {
-			blockL.AddOnlineMap(c.Block.Lists, c.Resolver.Verbose)
+			blockL.AddOnlineMap(httpClient, c.Block.Lists, c.Resolver.Verbose)
 			s.UpdateBlocklist(blockL.ToString())
-			allowL.AddOnlineMap(c.Allow.Lists, c.Resolver.Verbose)
+			c.Resolver.VPrint("---------------------")
+			allowL.AddOnlineMap(httpClient, c.Allow.Lists, c.Resolver.Verbose)
 			s.UpdateAllowlist(allowL.ToString())
 			c.Resolver.VPrint("---------------------")
 			time.Sleep(c.Refresh)

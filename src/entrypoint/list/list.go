@@ -31,28 +31,36 @@ func (l List) AddMap(m map[int]string) {
 	}
 }
 
-func (l List) AddOnlineMap(m map[int]string, verbose bool) {
+func (l List) AddOnlineMap(client *http.Client, m map[int]string, verbose bool) {
+	var resp *http.Response
+	var err error
+
 	for ak := range m {
 		if verbose {
 			fmt.Println("List load from:", m[ak])
 		}
-		resp, err := http.Get(m[ak])
-		if err == nil {
-			defer resp.Body.Close()
-			entries := 0
-			scanner := bufio.NewScanner(resp.Body)
-			for scanner.Scan() {
-				row := scanner.Text()
-				if !strings.HasPrefix("#", row) {
-					l.Add(row)
-					entries++
+
+		if resp, err = client.Get(m[ak]); err == nil {
+			if resp.StatusCode == http.StatusOK {
+				defer resp.Body.Close()
+				entries := 0
+				scanner := bufio.NewScanner(resp.Body)
+				for scanner.Scan() {
+					row := scanner.Text()
+					if !strings.HasPrefix("#", row) {
+						l.Add(row)
+						entries++
+					}
 				}
-			}
-			if verbose {
-				fmt.Println("Entries added:", entries)
+				if verbose {
+					fmt.Println("Entries added:", entries)
+				}
+			} else {
+				_ = resp.Body.Close()
 			}
 		} else {
 			fmt.Println("List load failed:", m[ak])
+			fmt.Println(err.Error())
 		}
 	}
 }
