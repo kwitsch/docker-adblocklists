@@ -13,6 +13,7 @@ func main() {
 		if err == nil {
 			if string(body) == "ok" {
 				os.Exit(0)
+				return
 			}
 		}
 	}
