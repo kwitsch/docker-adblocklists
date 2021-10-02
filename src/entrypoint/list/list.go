@@ -51,10 +51,12 @@ func (l List) AddOnlineMap(m map[int]string, verbose bool) {
 	}
 }
 
-func (l List) ToString() string {
+func (l List) ToString() (string, int) {
 	res := ""
+	entries := 0
 	for row := range l {
 		res += row + "\n"
+		entries++
 	}
-	return strings.TrimSpace(res)
+	return strings.TrimSpace(res), entries
 }
