@@ -4,21 +4,26 @@ import (
 	"adblocklists/config"
 	"net/http"
 	"runtime"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	Config *config.Config
-	block  string
-	allow  string
+	Config       *config.Config
+	block        string
+	blockEntries int
+	allow        string
+	allowEntries int
 }
 
 func New(conf *config.Config) *Server {
 	res := &Server{
 		conf,
 		"",
+		0,
 		"",
+		0,
 	}
 	return res
 }
@@ -37,24 +42,32 @@ func (s *Server) Run() {
 	}()
 }
 
-func (s *Server) UpdateBlocklist(list string) {
+func (s *Server) UpdateBlocklist(list string, entries int) {
 	s.block = list
+	s.blockEntries = entries
 }
 
-func (s *Server) UpdateAllowlist(list string) {
+func (s *Server) UpdateAllowlist(list string, entries int) {
 	s.allow = list
+	s.allowEntries = entries
 }
 
 func (s *Server) getBlocklist(c *gin.Context) {
-	returnRaw(c, s.block)
+	s.returnString(c, s.block, s.blockEntries)
 }
 func (s *Server) getAllowlist(c *gin.Context) {
-	returnRaw(c, s.allow)
+	s.returnString(c, s.allow, s.allowEntries)
 }
 func (s *Server) getHealthcheck(c *gin.Context) {
-	returnRaw(c, "ok")
+	s.returnString(c, "ok", 1)
 }
 
-func returnRaw(c *gin.Context, value string) {
-	c.Data(http.StatusOK, "", []byte(value))
+func (s *Server) returnString(c *gin.Context, value string, entries int) {
+	if entries > 0 {
+		c.Data(http.StatusOK, "text/plain", []byte(value))
+		s.Config.Resolver.VPrint("Returned " + strconv.Itoa(entries) + " entries")
+	} else {
+		c.AbortWithStatus(http.StatusNotFound)
+		s.Config.Resolver.VPrint("Request aborted")
+	}
 }
