@@ -1,16 +1,14 @@
-FROM ghcr.io/kwitsch/docker-buildimage:main AS build-entrypoint
+FROM ghcr.io/kwitsch/docker-buildimage:main AS build-env
 
-ADD src/entrypoint .
+ADD src .
+WORKDIR /builddir/entrypoint
 RUN gobuild.sh -o entrypoint
-
-FROM ghcr.io/kwitsch/docker-buildimage:main AS build-healthcheck
-
-ADD src/healthcheck .
+WORKDIR /builddir/healthcheck
 RUN gobuild.sh -o healthcheck
 
 FROM scratch
-COPY --from=build-entrypoint /builddir/entrypoint /entrypoint
-COPY --from=build-healthcheck /builddir/healthcheck /healthcheck
+COPY --from=build-env /builddir/entrypoint/entrypoint /entrypoint
+COPY --from=build-env /builddir/healthcheck/healthcheck /healthcheck
 
 ENTRYPOINT ["/entrypoint"]
 
