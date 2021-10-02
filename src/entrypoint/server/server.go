@@ -33,7 +33,7 @@ func (s *Server) Run() {
 		if runtime.GOOS == "windows" {
 			port = "8080"
 		}
-		router.Run("localhost:" + port)
+		router.Run(":" + port)
 	}()
 }
 
