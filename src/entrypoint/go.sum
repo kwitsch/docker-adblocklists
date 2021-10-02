@@ -62,8 +62,8 @@ github.com/json-iterator/go v1.1.9 h1:9yzud/Ht36ygwatGx56VwCZtlI/2AD15T1X2sjSuGn
 github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/knadh/koanf v1.2.3 h1:2Rkr0YhhYk+4QEOm800Q3Pu0Wi87svTxM6uuEb4WhYw=
 github.com/knadh/koanf v1.2.3/go.mod h1:xpPTwMhsA/aaQLAilyCCqfpEiY1gpa160AiCuWHJUjY=
-github.com/kwitsch/go-dockerutils v0.0.6 h1:RVbGjgb62GJoe0eqYKI5qpFcGcQmZai4fqAA6pMZukc=
-github.com/kwitsch/go-dockerutils v0.0.6/go.mod h1:29bE65dyOLlKvmOLMLyUXIvBJpwtwW5y2Bw4iDWOwO0=
+github.com/kwitsch/go-dockerutils v0.0.7 h1:/w8EQCkdily8KAghKmKUdfOBC+dPYUHk5InI+vQnueQ=
+github.com/kwitsch/go-dockerutils v0.0.7/go.mod h1:29bE65dyOLlKvmOLMLyUXIvBJpwtwW5y2Bw4iDWOwO0=
 github.com/leodido/go-urn v1.2.0 h1:hpXL4XnriNwQ/ABnpepYM/1vCLWNDfUNts8dX3xTG6Y=
 github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgxpxOKII=
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
