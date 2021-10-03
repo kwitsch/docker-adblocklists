@@ -43,13 +43,17 @@ func (s *Server) Run() {
 }
 
 func (s *Server) UpdateBlocklist(list string, entries int) {
-	s.block = list
-	s.blockEntries = entries
+	if entries > 0 {
+		s.block = list
+		s.blockEntries = entries
+	}
 }
 
 func (s *Server) UpdateAllowlist(list string, entries int) {
-	s.allow = list
-	s.allowEntries = entries
+	if entries > 0 {
+		s.allow = list
+		s.allowEntries = entries
+	}
 }
 
 func (s *Server) getBlocklist(c *gin.Context) {

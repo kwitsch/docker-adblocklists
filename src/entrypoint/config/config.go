@@ -1,6 +1,7 @@
 package config
 
 import (
+	"adblocklists/redisClient"
 	"strings"
 	"time"
 
@@ -10,10 +11,11 @@ import (
 )
 
 type Config struct {
-	Resolver *net.DockerResolver `koanf:"resolver"`
-	Refresh  time.Duration       `koanf:"refresh"`
-	Block    List                `koanf:"block"`
-	Allow    List                `koanf:"allow"`
+	Resolver *net.DockerResolver      `koanf:"resolver"`
+	Redis    *redisClient.RedisConfig `koanf:"redis"`
+	Refresh  time.Duration            `koanf:"refresh"`
+	Block    List                     `koanf:"block"`
+	Allow    List                     `koanf:"allow"`
 }
 
 type List struct {

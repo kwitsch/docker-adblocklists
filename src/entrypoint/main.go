@@ -15,6 +15,17 @@ func main() {
 	c := config.Get()
 	s := server.New(c)
 	s.Run()
+	if c.Redis.Enabled() {
+		c.Redis.Init()
+		bval, bent, berr := c.Redis.GetBlock()
+		if berr == nil {
+			s.UpdateBlocklist(bval, bent)
+		}
+		aval, aent, aerr := c.Redis.GetBlock()
+		if aerr == nil {
+			s.UpdateAllowlist(aval, aent)
+		}
+	}
 	c.Resolver.VPrint("---------------------")
 	rinitErr := c.Resolver.Init()
 	httpClient, _ := c.Resolver.GetHttpClient()
@@ -28,10 +39,18 @@ func main() {
 		c.Resolver.VPrint("---------------------")
 		for {
 			blockL.AddOnlineMap(httpClient, c.Block.Lists, c.Resolver.Verbose)
-			s.UpdateBlocklist(blockL.ToString())
+			bv, bc := blockL.ToString()
+			s.UpdateBlocklist(bv, bc)
+			if c.Redis.Enabled() {
+				c.Redis.SetBlock(bv, bc)
+			}
 			c.Resolver.VPrint("---------------------")
 			allowL.AddOnlineMap(httpClient, c.Allow.Lists, c.Resolver.Verbose)
-			s.UpdateAllowlist(allowL.ToString())
+			av, ac := allowL.ToString()
+			s.UpdateAllowlist(av, ac)
+			if c.Redis.Enabled() {
+				c.Redis.SetAllow(av, ac)
+			}
 			c.Resolver.VPrint("---------------------")
 			time.Sleep(c.Refresh)
 		}
