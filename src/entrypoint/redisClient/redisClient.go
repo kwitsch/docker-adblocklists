@@ -24,10 +24,18 @@ func (rc *RedisConfig) Enabled() bool {
 }
 
 func (rc *RedisConfig) Init() {
+	p := rc.Port
+	if p <= 0 {
+		p = 6379
+	}
+	d := rc.Database
+	if d < 0 {
+		d = 0
+	}
 	client := redis.NewClient(&redis.Options{
-		Addr:     rc.Server + ":" + strconv.Itoa(rc.Port),
+		Addr:     rc.Server + ":" + strconv.Itoa(p),
 		Password: rc.Password,
-		DB:       rc.Database,
+		DB:       d,
 	})
 	rc.client = client
 }
