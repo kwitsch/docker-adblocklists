@@ -16,6 +16,7 @@ func main() {
 	s := server.New(c)
 	s.Run()
 	if c.Redis.Enabled() {
+		c.Resolver.VPrint("Redis client enabled")
 		c.Redis.Init()
 		bval, bent, berr := c.Redis.GetBlock()
 		if berr == nil {
