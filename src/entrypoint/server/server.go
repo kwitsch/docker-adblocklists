@@ -2,6 +2,7 @@ package server
 
 import (
 	"adblocklists/config"
+	"context"
 	"net/http"
 	"runtime"
 	"strconv"
@@ -64,7 +65,7 @@ func (s *Server) getBlocklist(c *gin.Context) {
 			s.Config.Resolver.VPrint("Returned " + strconv.Itoa(s.blockEntries) + " entries")
 		} else {
 			s.Config.Resolver.VPrint("getBlocklist - wait")
-			time.Sleep(time.Second)
+			sleepContext(c, time.Second)
 		}
 	}
 }
@@ -75,11 +76,18 @@ func (s *Server) getAllowlist(c *gin.Context) {
 			s.Config.Resolver.VPrint("Returned " + strconv.Itoa(s.allowEntries) + " entries")
 		} else {
 			s.Config.Resolver.VPrint("getAllowlist - wait")
-			time.Sleep(time.Second)
+			sleepContext(c, time.Second)
 		}
 	}
 }
 
 func (s *Server) getHealthcheck(c *gin.Context) {
 	c.Data(http.StatusOK, "text/plain", []byte("ok"))
+}
+
+func sleepContext(ctx context.Context, delay time.Duration) {
+	select {
+	case <-ctx.Done():
+	case <-time.After(delay):
+	}
 }
