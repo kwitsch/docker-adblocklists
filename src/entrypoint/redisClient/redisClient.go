@@ -2,6 +2,7 @@ package redisClient
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"errors"
@@ -51,6 +52,7 @@ func (rc *RedisConfig) GetBlock() (string, int, error) {
 	val, valErr := rc.getSVal("Block_Value")
 	entries, entriesErr := rc.getIVal("Block_Count")
 	if valErr == nil && entriesErr == nil {
+		fmt.Println("Got blocklist from redis:", entries, "entries")
 		return val, entries, nil
 	} else {
 		return "", 0, errors.New("Coulden't get blocklist from redis")
@@ -68,6 +70,7 @@ func (rc *RedisConfig) GetAllow() (string, int, error) {
 	val, valErr := rc.getSVal("Allow_Value")
 	entries, entriesErr := rc.getIVal("Allow_Count")
 	if valErr == nil && entriesErr == nil {
+		fmt.Println("Got allowlist from redis:", entries, "entries")
 		return val, entries, nil
 	} else {
 		return "", 0, errors.New("Coulden't get blocklist from redis")
