@@ -42,14 +42,14 @@ func (rc *RedisConfig) Init() {
 
 func (rc *RedisConfig) SetBlock(value string, entries int) {
 	if entries > 0 {
-		rc.client.Set(ctx, Prefix("Block_Value"), value, 0).Err()
-		rc.client.Set(ctx, Prefix("Block_Count"), strconv.Itoa(entries), 0).Err()
+		rc.setSVal("Block_Value", value)
+		rc.setIVal("Block_Count", entries)
 	}
 }
 
 func (rc *RedisConfig) GetBlock() (string, int, error) {
-	val, valErr := rc.client.Get(ctx, "Block_Value").Result()
-	entries, entriesErr := rc.client.Get(ctx, "Block_Count").Int()
+	val, valErr := rc.getSVal("Block_Value")
+	entries, entriesErr := rc.getIVal("Block_Count")
 	if valErr == nil && entriesErr == nil {
 		return val, entries, nil
 	} else {
@@ -59,19 +59,32 @@ func (rc *RedisConfig) GetBlock() (string, int, error) {
 
 func (rc *RedisConfig) SetAllow(value string, entries int) {
 	if entries > 0 {
-		rc.client.Set(ctx, Prefix("Allow_Value"), value, 0).Err()
-		rc.client.Set(ctx, Prefix("Allow_Count"), entries, 0).Err()
+		rc.setSVal("Allow_Value", value)
+		rc.setIVal("Allow_Count", entries)
 	}
 }
 
 func (rc *RedisConfig) GetAllow() (string, int, error) {
-	val, valErr := rc.client.Get(ctx, "Allow_Value").Result()
-	entries, entriesErr := rc.client.Get(ctx, "Allow_Count").Int()
+	val, valErr := rc.getSVal("Allow_Value")
+	entries, entriesErr := rc.getIVal("Allow_Count")
 	if valErr == nil && entriesErr == nil {
 		return val, entries, nil
 	} else {
 		return "", 0, errors.New("Coulden't get blocklist from redis")
 	}
+}
+
+func (rc *RedisConfig) setSVal(key, value string) error {
+	return rc.client.Set(ctx, Prefix(key), value, 0).Err()
+}
+func (rc *RedisConfig) getSVal(key string) (string, error) {
+	return rc.client.Get(ctx, Prefix(key)).Result()
+}
+func (rc *RedisConfig) setIVal(key string, value int) error {
+	return rc.client.Set(ctx, Prefix(key), value, 0).Err()
+}
+func (rc *RedisConfig) getIVal(key string) (int, error) {
+	return rc.client.Get(ctx, Prefix(key)).Int()
 }
 
 func Prefix(key string) string {
