@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"runtime"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -57,21 +58,28 @@ func (s *Server) UpdateAllowlist(list string, entries int) {
 }
 
 func (s *Server) getBlocklist(c *gin.Context) {
-	s.returnString(c, s.block, s.blockEntries)
+	for i := 0; i < 120; i++ {
+		if s.blockEntries > 0 {
+			c.Data(http.StatusOK, "text/plain", []byte(s.block))
+			s.Config.Resolver.VPrint("Returned " + strconv.Itoa(s.blockEntries) + " entries")
+		} else {
+			s.Config.Resolver.VPrint("getBlocklist - wait")
+			time.Sleep(time.Second)
+		}
+	}
 }
 func (s *Server) getAllowlist(c *gin.Context) {
-	s.returnString(c, s.allow, s.allowEntries)
-}
-func (s *Server) getHealthcheck(c *gin.Context) {
-	s.returnString(c, "ok", 1)
+	for i := 0; i < 120; i++ {
+		if s.allowEntries > 0 {
+			c.Data(http.StatusOK, "text/plain", []byte(s.allow))
+			s.Config.Resolver.VPrint("Returned " + strconv.Itoa(s.allowEntries) + " entries")
+		} else {
+			s.Config.Resolver.VPrint("getAllowlist - wait")
+			time.Sleep(time.Second)
+		}
+	}
 }
 
-func (s *Server) returnString(c *gin.Context, value string, entries int) {
-	if entries > 0 {
-		c.Data(http.StatusOK, "text/plain", []byte(value))
-		s.Config.Resolver.VPrint("Returned " + strconv.Itoa(entries) + " entries")
-	} else {
-		c.AbortWithStatus(http.StatusTooEarly)
-		s.Config.Resolver.VPrint("List isen't ready yet")
-	}
+func (s *Server) getHealthcheck(c *gin.Context) {
+	c.Data(http.StatusOK, "text/plain", []byte("ok"))
 }
