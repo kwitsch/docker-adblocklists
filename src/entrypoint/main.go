@@ -15,6 +15,7 @@ func main() {
 	c := config.Get()
 	s := server.New(c)
 	s.Run()
+	rinitErr := c.Resolver.Init()
 	if c.Redis.Enabled() {
 		c.Resolver.VPrint("Redis client enabled")
 		c.Redis.Init()
@@ -28,7 +29,6 @@ func main() {
 		}
 	}
 	c.Resolver.VPrint("---------------------")
-	rinitErr := c.Resolver.Init()
 	httpClient, _ := c.Resolver.GetHttpClient()
 	if rinitErr == nil {
 		blockL := list.New()
