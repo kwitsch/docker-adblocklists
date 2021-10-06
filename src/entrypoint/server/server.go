@@ -2,7 +2,6 @@ package server
 
 import (
 	"adblocklists/config"
-	"context"
 	"net/http"
 	"runtime"
 	"strconv"
@@ -10,6 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+const plain = "text/plain"
 
 type Server struct {
 	Config       *config.Config
@@ -59,35 +60,39 @@ func (s *Server) UpdateAllowlist(list string, entries int) {
 }
 
 func (s *Server) getBlocklist(c *gin.Context) {
+	s.Config.Resolver.VPrint("Request /blocklist")
 	for i := 0; i < 120; i++ {
 		if s.blockEntries > 0 {
-			c.Data(http.StatusOK, "text/plain", []byte(s.block))
+			c.Data(http.StatusOK, plain, []byte(s.block))
 			s.Config.Resolver.VPrint("Returned " + strconv.Itoa(s.blockEntries) + " entries")
+			c.Done()
+			return
 		} else {
-			s.Config.Resolver.VPrint("getBlocklist - wait")
 			sleepContext(c, time.Second)
 		}
 	}
 }
 func (s *Server) getAllowlist(c *gin.Context) {
+	s.Config.Resolver.VPrint("Request /allowlist")
 	for i := 0; i < 120; i++ {
 		if s.allowEntries > 0 {
-			c.Data(http.StatusOK, "text/plain", []byte(s.allow))
+			c.Data(http.StatusOK, plain, []byte(s.allow))
 			s.Config.Resolver.VPrint("Returned " + strconv.Itoa(s.allowEntries) + " entries")
+			c.Done()
+			return
 		} else {
-			s.Config.Resolver.VPrint("getAllowlist - wait")
 			sleepContext(c, time.Second)
 		}
 	}
 }
 
 func (s *Server) getHealthcheck(c *gin.Context) {
-	c.Data(http.StatusOK, "text/plain", []byte("ok"))
+	c.Data(http.StatusOK, plain, []byte("ok"))
 }
 
-func sleepContext(ctx context.Context, delay time.Duration) {
+func sleepContext(c *gin.Context, delay time.Duration) {
 	select {
-	case <-ctx.Done():
+	case <-c.Request.Context().Done():
 	case <-time.After(delay):
 	}
 }
